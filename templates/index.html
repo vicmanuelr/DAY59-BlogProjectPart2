@@ -5,8 +5,8 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="site-heading">
-                    <h1>Clean Blog</h1>
-                    <span class="subheading">A Blog Theme by Start Bootstrap</span>
+                    <h1>Victor Blog</h1>
+                    <span class="subheading">Random blog of actual daily issues</span>
                 </div>
             </div>
         </div>
@@ -20,14 +20,14 @@
             {% for blog_post in posts: %}
             <!-- Post preview-->
             <div class="post-preview">
-                <a href="post.html">
+                {% set num = blog_post["id"] %}
+                <a href="{{ url_for('get_blog', num=num) }}">
                     <h2 class="post-title">{{ blog_post["title"] }}</h2>
                     <h3 class="post-subtitle">{{ blog_post["subtitle"] }}</h3>
                 </a>
                 <p class="post-meta">
-                    {% set num = blog_post["id"] %}
                     Posted by
-                    <a href="#!">Start Bootstrap</a>
+                    <a href="#!">{{ blog_post["author"] }}</a>
                     on September 24, 2022
                 </p>
             </div>
