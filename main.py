@@ -1,11 +1,8 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from datetime import datetime
 import requests
 
-
 app = Flask(__name__)
-
-
 year = datetime.now().year
 
 
@@ -27,14 +24,19 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact", methods=["POST", "GET"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "GET":
+        return render_template("contact.html")
+    elif request.method == "POST":
+        data = request.form
+        print(data["name"], data["email"], data["phone"])
+        return "<h1>Successfully sent your request</h1>"
 
 
 @app.route("/blog/<num>")
 def get_blog(num):
-    all_posts =call_posts_api()
+    all_posts = call_posts_api()
     post_selected = {}
     for post in all_posts:
         if int(post["id"]) == int(num):
