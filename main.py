@@ -1,6 +1,8 @@
 from flask import Flask, render_template, url_for, request
 from datetime import datetime
+import smtplib
 import requests
+import os
 
 app = Flask(__name__)
 year = datetime.now().year
@@ -11,6 +13,19 @@ def call_posts_api():
     response = requests.get(url=blog_url)
     all_posts = response.json()
     return all_posts
+
+
+def send_email(message, phone_number, name):
+    MY_EMAIL = os.environ.get("EMAIL")
+    MY_PASSWORD = os.environ.get("PASSWORD")
+    with smtplib.SMTP("smtp.gmail.com", port=587) as msg:
+        msg.starttls()
+        msg.login(user=MY_EMAIL, password=MY_PASSWORD)
+        msg.sendmail(
+            from_addr=MY_EMAIL,
+            to_addrs=MY_EMAIL,
+            msg=f"Subject:From blog!\n\n{message}\n",
+        )
 
 
 @app.route('/')
@@ -26,12 +41,11 @@ def about():
 
 @app.route("/contact", methods=["POST", "GET"])
 def contact():
-    if request.method == "GET":
-        return render_template("contact.html")
-    elif request.method == "POST":
+    if request.method == "POST":
         data = request.form
-        print(data["name"], data["email"], data["phone"])
-        return "<h1>Successfully sent your request</h1>"
+        send_email(message=data["message"], name=data["name"], phone_number=data["phone"])
+        return render_template("contact.html", data_entered=True)
+    return render_template("contact.html", data_entered=False)
 
 
 @app.route("/blog/<num>")
